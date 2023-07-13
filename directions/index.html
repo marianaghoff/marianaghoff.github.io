@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Directions and Output</title>
+
+    <!-- Configure dojo for asynchronous module loading -->
+    <script>
+        var dojoConfig = {
+            async: true
+        };
+    </script>
+
+    <!-- Reference libraries. The first CSS is a Dojo theme that gives dijits a consistent style. -->
+    <link rel="stylesheet" href="http://js.arcgis.com/3.18/dijit/themes/nihilo/nihilo.css">
+    <link rel="stylesheet" href="http://js.arcgis.com/3.18/esri/css/esri.css">
+    <style>
+        html, body, #map {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: #FFF;
+            overflow: hidden;
+            font-family: "Trebuchet MS";
+        }
+
+        #bcMain {
+            width: 100%;
+            height: 100%;
+        }
+
+        #cpLeading {
+            width: 200px;
+        }
+    </style>
+
+
+
+    <script src="http://js.arcgis.com/3.18/"></script>
+    
+    
+    <script>
+        var mapMain;
+
+        // @formatter:off
+        require([
+                "esri/map",
+                "esri/dijit/Directions",
+                "esri/dijit/Print",
+                "esri/tasks/PrintTemplate",
+
+                "dojo/parser",
+                "dojo/ready",
+
+                "dijit/layout/BorderContainer",
+                "dijit/layout/ContentPane"],
+            function (Map, Directions, Print, PrintTemplate,
+                    parser, ready,
+                    BorderContainer, ContentPane) {
+        // @formatter:on
+
+                // Wait until DOM is ready *and* all outstanding require() calls have been resolved
+                ready(function () {
+
+                    // Parse DOM nodes decorated with the data-dojo-type attribute
+                    parser.parse();
+
+
+                    /*
+                    * Step: create an array of JSON objects that will be used to create print templates
+                    */
+
+                    var myLayouts = [{
+                        "name": "Letter ANSI A Landscape",
+                        "label": "Landscape (PDF)",
+                        "format": "pdf",
+                        "options": {
+                            "legendLayers": [], // empty array means no legend
+                            "scalebarUnit": "Miles",
+                            "titleText": "Landscape PDF"
+                        }
+                    }, {
+                        "name": "Letter ANSI A Portrait",
+                        "label": "Portrait (JPG)",
+                        "format": "jpg",
+                        "options": {
+                            "legendLayers": [],
+                            "scaleBarUnit": "Miles",
+                            "titleText": "Portrait JPG"
+                        }
+                    }];
+
+
+                    /*
+                    * Step: create the print templates
+                    */
+                    var myTemplates = [];
+                    dojo.forEach(myLayouts, function (lo) {
+                        var t = new PrintTemplate();
+                        t.layout = lo.name;
+                        t.label = lo.label;
+                        t.format = lo.format;
+                        t.layoutOptions = lo.options
+                        myTemplates.push(t);
+                    });
+
+                    // Create the map
+                    mapMain = new Map("cpCenter", {
+                        basemap: "topo",
+                        center: [-117.19, 34.05],
+                        zoom: 13
+                    });
+
+                    /*
+                    * Step: Add the Directions widget
+                    */
+                    var dijitDirections = new Directions({
+                        map: mapMain,
+                        routeTaskUrl: "http://utility.arcgis.com/usrsvcs/appservices/OM1GNiiACNJceMRn/rest/services/World/Route/NAServer/Route_World"
+
+                    }, "divDirections");
+                    dijitDirections.startup();
+
+
+                    /*
+                    * Step: Add a Print widget that uses the prepared templates
+                    */
+                    var widgetPrint = new Print({
+                        map: mapMain,
+                        url: "http://sampleserver6.arcgisonline.com/arcgis/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task",
+                        templates: myTemplates
+                    }, divPrint);
+                    widgetPrint.startup();
+
+                });
+            });
+
+    </script>
+</head>
+
+<body class="nihilo">
+<div id="bcMain" data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="design:'sidebar', liveSplitters:'true'">
+    <div id="cpLeading" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="splitter:'true', region:'leading'">
+        Directions widget
+        <div id="divDirections"></div>
+        <div id="divPrint"></div>
+    </div>
+    <div id="cpCenter" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'center'"></div>
+
+</div>
+</body>
+</html>
