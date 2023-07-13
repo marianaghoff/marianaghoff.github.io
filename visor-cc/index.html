@@ -1,0 +1,1269 @@
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>Visor de cambio climático para Centroamérica</title>
+    <link rel="stylesheet" href="https://js.arcgis.com/4.26/esri/themes/dark/main.css">
+    <script src="https://js.arcgis.com/4.26/"></script>
+    <style>
+      html, body, #map {
+        height: 100%;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+      }
+      #leftPanel {
+        position: absolute;
+        top: 90px;
+        bottom: 280px;
+        width: 200px;
+        overflow-y: auto;
+        background-color: #212122;
+        box-shadow: 2px 2px 5px #616060;
+        padding: 10px;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 14px;
+        line-height: 1.5em;
+        color: #d7d5dd;
+        
+      }
+
+      #rightPanel {
+        position: absolute;
+        top: 90px;
+        bottom: 140px;
+        width: 200px;
+        overflow-y: auto;
+        background-color: #212122;
+        box-shadow: 2px 2px 5px #616060;
+        padding: 10px;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 14px;
+        line-height: 1.5em;
+        color: #d7d5dd;
+      }
+
+      #leftPanel {
+        left: 0;
+      }
+
+      #rightPanel {
+        right: 0;
+      }
+
+      h1 {
+        font-size: 14px;
+        font-weight: bold;
+        margin-top: 0;
+        margin-bottom: 10px;
+      }
+      h2 {
+        font-size: 14px;
+        font-weight: bold;
+        margin-top: 20px;
+        margin-bottom: 10px;
+      }
+      ul {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+      }
+      li {
+        margin-bottom: 5px;
+      }
+
+    </style>
+    <script>
+      require([
+        "esri/Map",
+        "esri/views/MapView",
+        "esri/layers/TileLayer",
+        "esri/portal/PortalItem",
+        "esri/widgets/Legend",
+        "esri/layers/FeatureLayer",
+        "esri/PopupTemplate",
+        "esri/popup/LayerOptions"
+      ], function (Map, MapView, TileLayer, PortalItem, Legend, FeatureLayer, PopupTemplate, LayerOptions) {
+
+        // Step 1: Crear mapa
+        var map = new Map({
+          basemap: "dark-gray-vector"
+        });
+
+        var view = new MapView({
+          container: "map",
+          map: map,
+          center: [-85.325024, 12.251702],
+          zoom: 5
+        });
+
+           
+        
+        
+        //Step 2: --- Llamar capas ---
+        
+        //Llamar Climatología precipitación 1981-1994
+        
+        var portalItemA = new PortalItem({
+          id:"584e83b0792543638f0efb385ef57980"
+        })
+
+        var layerA = new TileLayer({
+          portalItem: portalItemA
+        });
+
+        map.add(layerA);
+        layerA.visible = false;
+
+        // Construir leyenda precipitación 1994-2014
+
+        var legendA = new Legend({
+          view: view,
+          layerInfos: [{
+            layer: layerA,
+            title: "Precipitación promedio 1981-1994"
+          }]
+        });
+
+        view.ui.add(legendA, "bottom-left");
+        legendA.visible = false;
+
+        //Traer estadísticas con el feature
+
+        var portalStatsA = new PortalItem({
+          id:"2a887d16fa864e4da5935d9e40d039b8"
+        })
+
+        var statsA = new FeatureLayer({
+          portalItem: portalStatsA
+        });
+
+        map.add(statsA);
+        statsA.visible = false;
+
+        
+        
+        
+        // Click en checkbox precipitación 1981-1994
+
+        // Add an event listener for the checkbox with id "81precip"
+        document.getElementById("81precip").addEventListener("click", function() {
+          // Update layerA visibility based on the checkbox state
+          layerA.visible = this.checked,   
+          legendA.visible = this.checked,
+          statsA.visible = this.checked;
+
+          if (this.checked) {
+            // Create a custom PopupTemplate for statsA
+            var popupTemplate = new PopupTemplate({
+              title: "{PAIS}",
+              content: [
+                {
+                  type: "fields",
+                  fieldInfos: [
+                    {
+                      fieldName: "Periodo",
+                      label: "Período"
+                    },
+                    {
+                      fieldName: "Mínimo",
+                      label: "Mínimo",
+                    },
+                    {
+                      fieldName: "Máximo",
+                      label: "Máximo",
+                    },
+                    {
+                      fieldName: "Rango",
+                      label: "Rango",
+                    },
+                    {
+                      fieldName: "Promedio",
+                      label: "Promedio",
+                    }
+                  ]
+                }
+              ]
+            });
+            
+            // Set the PopupTemplate for statsA
+            statsA.popupTemplate = popupTemplate;
+          } else {
+            // Remove the PopupTemplate for statsA
+            statsA.popupTemplate = null;
+          }
+        });
+        
+        
+        //--------------------------------------------------------------------------------------------//
+
+        //Llamar Climatología precipitación 1995-2015
+        
+        var portalItemB = new PortalItem({
+          id:"8fdd7502ea9e4f99b67104d6f2eea4ec"
+        })
+
+        var layerB = new TileLayer({
+          portalItem: portalItemB
+        });
+
+        map.add(layerB);
+        layerB.visible = false;
+
+        // Construir leyenda precipitación 1995-2014
+
+        var legendB = new Legend({
+          view: view,
+          layerInfos: [{
+            layer: layerB,
+            title: "Precipitación promedio 1995-2014"
+          }]
+        });
+
+        view.ui.add(legendB, "bottom-left");
+        legendB.visible = false;
+
+        //Traer estadísticas con el feature
+
+        var portalStatsB = new PortalItem({
+          id:"c3188d5881614593af6a8177a344b59e"
+        })
+
+        var statsB = new FeatureLayer({
+          portalItem: portalStatsB
+        });
+
+        map.add(statsB);
+        statsB.visible = false;
+
+        
+
+        // Click en checkbox precipitación 1995-2014
+
+        // Add an event listener for the checkbox with id "81temp"
+        document.getElementById("94precip").addEventListener("click", function() {
+          // Update layerA visibility based on the checkbox state
+          layerB.visible = this.checked,   
+          legendB.visible = this.checked,
+          statsB.visible = this.checked;
+
+          if (this.checked) {
+            // Create a custom PopupTemplate for statsA
+            var popupTemplate = new PopupTemplate({
+              title: "{PAIS}",
+              content: [
+                {
+                  type: "fields",
+                  fieldInfos: [
+                    {
+                      fieldName: "Periodo",
+                      label: "Período"
+                    },
+                    {
+                      fieldName: "Mínimo",
+                      label: "Mínimo"
+                    },
+                    {
+                      fieldName: "Máximo",
+                      label: "Máximo"
+                    },
+                    {
+                      fieldName: "Rango",
+                      label: "Rango"
+                    },
+                    {
+                      fieldName: "Promedio",
+                      label: "Promedio"
+                    }
+                  ]
+                }
+              ]
+            });
+            
+            // Set the PopupTemplate for statsA
+            statsB.popupTemplate = popupTemplate;
+          } else {
+            // Remove the PopupTemplate for statsA
+            statsB.popupTemplate = null;
+          }
+        });
+        
+
+        //--------------------------------------------------------------------------------------------//
+
+        //Llamar Climatología temperatura 1981-1994 
+        
+        var portalItemC = new PortalItem({
+          id:"6e2bdc4f6a894742801a947067be45d7"
+        })
+
+        var layerC = new TileLayer({
+          portalItem: portalItemC
+        });
+
+        map.add(layerC);
+        layerC.visible = false;
+
+        // Construir leyenda temperatura 1981-1994 
+
+        var legendC = new Legend({
+          view: view,
+          layerInfos: [{
+            layer: layerC,
+            title: "Temperatura media promedio 1981-1994"
+          }]
+        });
+
+        view.ui.add(legendC, "bottom-left");
+        legendC.visible = false;
+
+        //Traer estadísticas con el feature
+
+        var portalStatsC = new PortalItem({
+          id:"42b28a6deb1d4f3d9e44e64dde3bd149"
+        })
+
+        var statsC = new FeatureLayer({
+          portalItem: portalStatsC
+        });
+
+        map.add(statsC);
+        statsC.visible = false;
+
+        // Click en checkbox temperatura 1981-1994 
+
+        // Add an event listener for the checkbox with id "81temp"
+        document.getElementById("81temp").addEventListener("click", function() {
+          // Update layerA visibility based on the checkbox state
+          layerC.visible = this.checked,   
+          legendC.visible = this.checked,
+          statsC.visible = this.checked;
+
+          if (this.checked) {
+            // Create a custom PopupTemplate for statsA
+            var popupTemplate = new PopupTemplate({
+              title: "{PAIS}",
+              content: [
+                {
+                  type: "fields",
+                  fieldInfos: [
+                    {
+                      fieldName: "Periodo",
+                      label: "Período"
+                    },
+                    {
+                      fieldName: "Mínimo",
+                      label: "Mínimo C°"
+                    },
+                    {
+                      fieldName: "Máximo",
+                      label: "Máximo C°"
+                    },
+                    {
+                      fieldName: "Rango",
+                      label: "Rango C°"
+                    },
+                    {
+                      fieldName: "Promedio",
+                      label: "Promedio C°"
+                    }
+                  ]
+                }
+              ]
+            });
+            
+            // Set the PopupTemplate for statsA
+            statsC.popupTemplate = popupTemplate;
+          } else {
+            // Remove the PopupTemplate for statsA
+            statsC.popupTemplate = null;
+          }
+        
+        });
+
+        //--------------------------------------------------------------------------------------------//
+
+        //Llamar Climatología temperatura 1995-2014 
+        
+        var portalItemD = new PortalItem({
+          id:"69aa8fdc66ab4c03a402b03c2d15a2bd"
+        })
+
+        var layerD = new TileLayer({
+          portalItem: portalItemD
+        });
+
+        map.add(layerD);
+        layerD.visible = false;
+
+        // Construir leyenda temperatura 1995-2014  
+
+        var legendD = new Legend({
+          view: view,
+          layerInfos: [{
+            layer: layerD,
+            title: "Temperatura media promedio 1995-2014"
+          }]
+        });
+
+        view.ui.add(legendD, "bottom-left");
+        legendD.visible = false;
+
+        //Traer estadísticas con el feature
+
+        var portalStatsD = new PortalItem({
+          id:"a848d40fa60d4dcaab0d77744befe9e3"
+        })
+
+        var statsD = new FeatureLayer({
+          portalItem: portalStatsD
+        });
+
+        map.add(statsD);
+        statsD.visible = false;
+
+        // Click en checkbox temperatura 1981-1994 
+
+        // Add an event listener for the checkbox with id "81temp"
+        document.getElementById("94temp").addEventListener("click", function() {
+          // Update layerA visibility based on the checkbox state
+          layerD.visible = this.checked,   
+          legendD.visible = this.checked,
+          statsD.visible = this.checked;
+
+          if (this.checked) {
+            // Create a custom PopupTemplate for statsA
+            var popupTemplate = new PopupTemplate({
+              title: "{PAIS}",
+              content: [
+                {
+                  type: "fields",
+                  fieldInfos: [
+                    {
+                      fieldName: "Periodo",
+                      label: "Período"
+                    },
+                    {
+                      fieldName: "Mínimo",
+                      label: "Mínimo C°"
+                    },
+                    {
+                      fieldName: "Máximo",
+                      label: "Máximo C°"
+                    },
+                    {
+                      fieldName: "Rango",
+                      label: "Rango C°"
+                    },
+                    {
+                      fieldName: "Promedio",
+                      label: "Promedio C°"
+                    }
+                  ]
+                }
+              ]
+            });
+            
+            // Set the PopupTemplate for statsA
+            statsD.popupTemplate = popupTemplate;
+          } else {
+            // Remove the PopupTemplate for statsA
+            statsD.popupTemplate = null;
+          }
+        
+        });
+
+
+        //--------------------------------------------------------------------------------------------//
+
+        //Llamar Escenario Precipitación 2020-2039  
+        
+        var portalItemF = new PortalItem({
+          id:"80a1320fb45d4af6b792bee8f07f450c"
+        })
+
+        var layerF = new TileLayer({
+          portalItem: portalItemF
+        });
+
+        map.add(layerF);
+        layerF.visible = false;
+
+        // Construir leyenda Escenario Precipitación 2020-2039   
+
+        var legendF = new Legend({
+          view: view,
+          layerInfos: [{
+            layer: layerF,
+            title: "Promedio de escenarios SSP2 4.5 y SSP5 8.5 para precipitación"
+          }]
+        });
+
+        view.ui.add(legendF, "bottom-left");
+        legendF.visible = false;
+
+        //Traer estadísticas con el feature
+
+        var portalStatsF = new PortalItem({
+          id:"6beb259874594c53986ab826f19a823b"
+        })
+
+        var statsF = new FeatureLayer({
+          portalItem: portalStatsF
+        });
+
+        map.add(statsF);
+        statsF.visible = false;
+
+        // Click en checkbox Escenario Precipitación 2020-2039 
+
+        // Add an event listener for the checkbox with id "81temp"
+        document.getElementById("20precip").addEventListener("click", function() {
+          // Update layerA visibility based on the checkbox state
+          layerF.visible = this.checked,   
+          legendF.visible = this.checked,
+          statsF.visible = this.checked;
+
+          if (this.checked) {
+            // Create a custom PopupTemplate for statsA
+            var popupTemplate = new PopupTemplate({
+              title: "{PAIS}",
+              content: [
+                {
+                  type: "fields",
+                  fieldInfos: [
+                    {
+                      fieldName: "Periodo",
+                      label: "Período"
+                    },
+                    {
+                      fieldName: "Mínimo",
+                      label: "Mínimo"
+                    },
+                    {
+                      fieldName: "Máximo",
+                      label: "Máximo"
+                    },
+                    {
+                      fieldName: "Rango",
+                      label: "Rango"
+                    },
+                    {
+                      fieldName: "Promedio",
+                      label: "Promedio"
+                    }
+                  ]
+                }
+              ]
+            });
+            
+            // Set the PopupTemplate for statsA
+            statsF.popupTemplate = popupTemplate;
+          } else {
+            // Remove the PopupTemplate for statsA
+            statsF.popupTemplate = null;
+          }
+
+
+
+
+        
+        });
+
+        //--------------------------------------------------------------------------------------------//
+
+        //Llamar Escenario Precipitación 2040-2059  
+        
+        var portalItemG = new PortalItem({
+          id:"0e09d7803b8f4a2192ff56f46570258f"
+        })
+
+        var layerG = new TileLayer({
+          portalItem: portalItemG
+        });
+
+        map.add(layerG);
+        layerG.visible = false;
+
+        // Construir leyenda Escenario Precipitación 2020-2039   
+
+        var legendG = new Legend({
+          view: view,
+          layerInfos: [{
+            layer: layerG,
+            title: "Promedio de escenarios SSP2 4.5 y SSP5 8.5 para precipitación"
+          }]
+        });
+
+        view.ui.add(legendG, "bottom-left");
+        legendG.visible = false;
+      
+        //Traer estadísticas con el feature
+
+        var portalStatsG = new PortalItem({
+          id:"10d34fa2abea4cbcaf7329c54ffbfd2a"
+        })
+
+        var statsG = new FeatureLayer({
+          portalItem: portalStatsG
+        });
+
+        map.add(statsG);
+        statsG.visible = false;
+
+        // Click en checkbox Escenario Precipitación 2020-2039 
+
+        // Add an event listener for the checkbox with id "81temp"
+        document.getElementById("40precip").addEventListener("click", function() {
+          // Update layerA visibility based on the checkbox state
+          layerG.visible = this.checked,   
+          legendG.visible = this.checked;
+          statsG.visible = this.checked;
+
+          if (this.checked) {
+            // Create a custom PopupTemplate for statsA
+            var popupTemplate = new PopupTemplate({
+              title: "{PAIS}",
+              content: [
+                {
+                  type: "fields",
+                  fieldInfos: [
+                    {
+                      fieldName: "Periodo",
+                      label: "Período"
+                    },
+                    {
+                      fieldName: "Mínimo",
+                      label: "Mínimo"
+                    },
+                    {
+                      fieldName: "Máximo",
+                      label: "Máximo"
+                    },
+                    {
+                      fieldName: "Rango",
+                      label: "Rango"
+                    },
+                    {
+                      fieldName: "Promedio",
+                      label: "Promedio"
+                    }
+                  ]
+                }
+              ]
+            });
+            
+            // Set the PopupTemplate for statsA
+            statsG.popupTemplate = popupTemplate;
+          } else {
+            // Remove the PopupTemplate for statsA
+            statsG.popupTemplate = null;
+          }
+        
+        });
+
+        //--------------------------------------------------------------------------------------------//
+
+        //Llamar Escenario Precipitación 2060-2079  
+        
+        var portalItemH = new PortalItem({
+          id:"f5c0782ecb0f420b8326381df72fb256"
+        })
+
+        var layerH = new TileLayer({
+          portalItem: portalItemH
+        });
+
+        map.add(layerH);
+        layerH.visible = false;
+
+        // Construir leyenda Escenario Precipitación 2060-2079    
+
+        var legendH = new Legend({
+          view: view,
+          layerInfos: [{
+            layer: layerH,
+            title: "Promedio de escenarios SSP2 4.5 y SSP5 8.5 para precipitación"
+          }]
+        });
+
+        view.ui.add(legendH, "bottom-left");
+        legendH.visible = false;
+
+        //Traer estadísticas con el feature
+
+        var portalStatsH = new PortalItem({
+          id:"dc752d29fc1647a18fa5f2a7081adeeb"
+        })
+
+        var statsH = new FeatureLayer({
+          portalItem: portalStatsH
+        });
+
+        map.add(statsH);
+        statsH.visible = false;
+        
+        
+        // Click en checkbox Escenario Precipitación 2060-2079  
+
+        // Add an event listener for the checkbox with id "81temp"
+        document.getElementById("60precip").addEventListener("click", function() {
+          // Update layerA visibility based on the checkbox state
+          layerH.visible = this.checked,   
+          legendH.visible = this.checked;
+          statsH.visible = this.checked;
+
+          if (this.checked) {
+            // Create a custom PopupTemplate for statsA
+            var popupTemplate = new PopupTemplate({
+              title: "{PAIS}",
+              content: [
+                {
+                  type: "fields",
+                  fieldInfos: [
+                    {
+                      fieldName: "Periodo",
+                      label: "Período"
+                    },
+                    {
+                      fieldName: "Mínimo",
+                      label: "Mínimo"
+                    },
+                    {
+                      fieldName: "Máximo",
+                      label: "Máximo"
+                    },
+                    {
+                      fieldName: "Rango",
+                      label: "Rango"
+                    },
+                    {
+                      fieldName: "Promedio",
+                      label: "Promedio"
+                    }
+                  ]
+                }
+              ]
+            });
+            
+            // Set the PopupTemplate for statsA
+            statsH.popupTemplate = popupTemplate;
+          } else {
+            // Remove the PopupTemplate for statsA
+            statsH.popupTemplate = null;
+          }
+        
+        });
+
+        //--------------------------------------------------------------------------------------------//
+
+        //Llamar Escenario Precipitación 2080-2099  
+        
+        var portalItemJ = new PortalItem({
+          id:"fb54940dc8184a97bede5d12d09b4ac5"
+        })
+
+        var layerJ = new TileLayer({
+          portalItem: portalItemJ
+        });
+
+        map.add(layerJ);
+        layerJ.visible = false;
+
+        // Construir leyenda Escenario Precipitación 2080-2099    
+
+        var legendJ = new Legend({
+          view: view,
+          layerInfos: [{
+            layer: layerJ,
+            title: "Promedio de escenarios SSP2 4.5 y SSP5 8.5 para precipitación"
+          }]
+        });
+
+        view.ui.add(legendJ, "bottom-left");
+        legendJ.visible = false;
+
+        //Traer estadísticas con el feature
+
+        var portalStatsJ = new PortalItem({
+          id:"356fd5c8419444d591c1a3f74a72cf5d"
+        })
+
+        var statsJ = new FeatureLayer({
+          portalItem: portalStatsJ
+        });
+
+        map.add(statsJ);
+        statsJ.visible = false;
+
+        // Click en checkbox Escenario Precipitación 2080-2099  
+
+        // Add an event listener for the checkbox with id "81temp"
+        document.getElementById("80precip").addEventListener("click", function() {
+          // Update layerA visibility based on the checkbox state
+          layerJ.visible = this.checked,   
+          legendJ.visible = this.checked,
+          statsJ.visible = this.checked;
+
+
+          if (this.checked) {
+            // Create a custom PopupTemplate for statsA
+            var popupTemplate = new PopupTemplate({
+              title: "{PAIS}",
+              content: [
+                {
+                  type: "fields",
+                  fieldInfos: [
+                    {
+                      fieldName: "Periodo",
+                      label: "Período"
+                    },
+                    {
+                      fieldName: "Mínimo",
+                      label: "Mínimo"
+                    },
+                    {
+                      fieldName: "Máximo",
+                      label: "Máximo"
+                    },
+                    {
+                      fieldName: "Rango",
+                      label: "Rango"
+                    },
+                    {
+                      fieldName: "Promedio",
+                      label: "Promedio"
+                    }
+                  ]
+                }
+              ]
+            });
+            
+            // Set the PopupTemplate for statsA
+            statsJ.popupTemplate = popupTemplate;
+          } else {
+            // Remove the PopupTemplate for statsA
+            statsJ.popupTemplate = null;
+          }
+        
+        });
+
+        //--------------------------------------------------------------------------------------------//
+
+        //Llamar Escenario Temperatura 2020-2039   
+        
+        var portalItemK = new PortalItem({
+          id:"1bd564007fd445368cd35d2035dabfb8"
+        })
+
+        var layerK = new TileLayer({
+          portalItem: portalItemK
+        });
+
+        map.add(layerK);
+        layerK.visible = false;
+
+        // Construir leyenda Escenario Temperatura 2020-2039     
+
+        var legendK = new Legend({
+          view: view,
+          layerInfos: [{
+            layer: layerK,
+            title: "Promedio de escenarios SSP2 4.5 y SSP5 8.5 para temperatura"
+          }]
+        });
+
+        view.ui.add(legendK, "bottom-left");
+        legendK.visible = false;
+
+        //Traer estadísticas con el feature
+
+        var portalStatsK = new PortalItem({
+          id:"785002d312904be7935cda9049ef814d"
+        })
+
+        var statsK = new FeatureLayer({
+          portalItem: portalStatsK
+        });
+
+        map.add(statsK);
+        statsK.visible = false;
+
+        // Click en checkbox Escenario Temperatura 2020-2039    
+
+        // Add an event listener for the checkbox with id "81temp"
+        document.getElementById("20temp").addEventListener("click", function() {
+          // Update layerA visibility based on the checkbox state
+          layerK.visible = this.checked,   
+          legendK.visible = this.checked,
+          statsK.visible = this.checked;
+
+          if (this.checked) {
+            // Create a custom PopupTemplate for statsA
+            var popupTemplate = new PopupTemplate({
+              title: "{PAIS}",
+              content: [
+                {
+                  type: "fields",
+                  fieldInfos: [
+                    {
+                      fieldName: "Periodo",
+                      label: "Período"
+                    },
+                    {
+                      fieldName: "Mínimo",
+                      label: "Mínimo C°"
+                    },
+                    {
+                      fieldName: "Máximo",
+                      label: "Máximo C°"
+                    },
+                    {
+                      fieldName: "Rango",
+                      label: "Rango C°"
+                    },
+                    {
+                      fieldName: "Promedio",
+                      label: "Promedio C°"
+                    }
+                  ]
+                }
+              ]
+            });
+            
+            // Set the PopupTemplate for statsA
+            statsK.popupTemplate = popupTemplate;
+          } else {
+            // Remove the PopupTemplate for statsA
+            statsK.popupTemplate = null;
+          }
+        
+        });
+
+        //--------------------------------------------------------------------------------------------//
+
+        //Llamar Escenario Temperatura 2040-2059   
+        
+        var portalItemL = new PortalItem({
+          id:"79cd9969561b4369803e7984842448fc"
+        })
+
+        var layerL = new TileLayer({
+          portalItem: portalItemL
+        });
+
+        map.add(layerL);
+        layerL.visible = false;
+
+        // Construir leyenda Escenario Temperatura 2040-2059        
+
+        var legendL = new Legend({
+          view: view,
+          layerInfos: [{
+            layer: layerL,
+            title: "Promedio de escenarios SSP2 4.5 y SSP5 8.5 para temperatura"
+          }]
+        });
+
+        view.ui.add(legendL, "bottom-left");
+        legendL.visible = false;
+
+        
+        //Traer estadísticas con el feature
+
+        var portalStatsL = new PortalItem({
+          id:"2a3363ec8999483abb13bbbc3d82196b"
+        })
+
+        var statsL = new FeatureLayer({
+          portalItem: portalStatsL
+        });
+
+        map.add(statsL);
+        statsL.visible = false;
+        
+        
+        // Click en checkbox Escenario Temperatura 2040-2059      
+
+        // Add an event listener for the checkbox with id "81temp"
+        document.getElementById("40temp").addEventListener("click", function() {
+          // Update layerA visibility based on the checkbox state
+          layerL.visible = this.checked,   
+          legendL.visible = this.checked,
+          statsL.visible = this.checked;
+
+          if (this.checked) {
+            // Create a custom PopupTemplate for statsA
+            var popupTemplate = new PopupTemplate({
+              title: "{PAIS}",
+              content: [
+                {
+                  type: "fields",
+                  fieldInfos: [
+                    {
+                      fieldName: "Periodo",
+                      label: "Período"
+                    },
+                    {
+                      fieldName: "Mínimo",
+                      label: "Mínimo C°"
+                    },
+                    {
+                      fieldName: "Máximo",
+                      label: "Máximo C°"
+                    },
+                    {
+                      fieldName: "Rango",
+                      label: "Rango C°"
+                    },
+                    {
+                      fieldName: "Promedio",
+                      label: "Promedio C°"
+                    }
+                  ]
+                }
+              ]
+            });
+            
+            // Set the PopupTemplate for statsA
+            statsL.popupTemplate = popupTemplate;
+          } else {
+            // Remove the PopupTemplate for statsA
+            statsL.popupTemplate = null;
+          }
+        
+        });
+
+        //--------------------------------------------------------------------------------------------//
+
+        //Llamar Escenario Temperatura 2060 - 2079   
+        
+        var portalItemM = new PortalItem({
+          id:"b5427bd9607b4117b12060d5705131b6"
+        })
+
+        var layerM = new TileLayer({
+          portalItem: portalItemM
+        });
+
+        map.add(layerM);
+        layerM.visible = false;
+
+        // Construir leyenda Escenario Temperatura 2060 - 2079        
+
+        var legendM = new Legend({
+          view: view,
+          layerInfos: [{
+            layer: layerM,
+            title: "Promedio de escenarios SSP2 4.5 y SSP5 8.5 para temperatura"
+          }]
+        });
+
+        view.ui.add(legendM, "bottom-left");
+        legendM.visible = false;
+
+        //Traer estadísticas con el feature
+
+        var portalStatsM = new PortalItem({
+          id:"31441f6d34d844f1910bd8be328ea5f5"
+        })
+
+        var statsM = new FeatureLayer({
+          portalItem: portalStatsM
+        });
+
+        map.add(statsM);
+        statsM.visible = false;
+        
+        
+        // Click en checkbox Escenario Temperatura 2060 - 2079      
+
+        // Add an event listener for the checkbox with id "81temp"
+        document.getElementById("60temp").addEventListener("click", function() {
+          // Update layerA visibility based on the checkbox state
+          layerM.visible = this.checked,   
+          legendM.visible = this.checked,
+          statsM.visible = this.checked;
+
+          if (this.checked) {
+            // Create a custom PopupTemplate for statsA
+            var popupTemplate = new PopupTemplate({
+              title: "{PAIS}",
+              content: [
+                {
+                  type: "fields",
+                  fieldInfos: [
+                    {
+                      fieldName: "Periodo",
+                      label: "Período"
+                    },
+                    {
+                      fieldName: "Mínimo",
+                      label: "Mínimo C°"
+                    },
+                    {
+                      fieldName: "Máximo",
+                      label: "Máximo C°"
+                    },
+                    {
+                      fieldName: "Rango",
+                      label: "Rango C°"
+                    },
+                    {
+                      fieldName: "Promedio",
+                      label: "Promedio C°"
+                    }
+                  ]
+                }
+              ]
+            });
+            
+            // Set the PopupTemplate for statsA
+            statsM.popupTemplate = popupTemplate;
+          } else {
+            // Remove the PopupTemplate for statsA
+            statsM.popupTemplate = null;
+          }
+        
+        });
+
+        //--------------------------------------------------------------------------------------------//
+
+        //Llamar Escenario Temperatura 2080-2099   
+        
+        var portalItemN = new PortalItem({
+          id:"bcb78f1b8440431b8d41e8ad64e37239"
+        })
+
+        var layerN = new TileLayer({
+          portalItem: portalItemN
+        });
+
+        map.add(layerN);
+        layerN.visible = false;
+
+        // Construir leyenda Escenario Temperatura 2080-2099          
+
+        var legendN = new Legend({
+          view: view,
+          layerInfos: [{
+            layer: layerN,
+            title: "Promedio de escenarios SSP2 4.5 y SSP5 8.5 para temperatura"
+          }]
+        });
+
+        view.ui.add(legendN, "bottom-left");
+        legendN.visible = false;
+
+        //Traer estadísticas con el feature
+
+        var portalStatsN = new PortalItem({
+          id:"4f8ed480cf2d4398ba54934ab122ed4d"
+        })
+
+        var statsN = new FeatureLayer({
+          portalItem: portalStatsN
+        });
+
+        map.add(statsN);
+        statsN.visible = false;
+
+        // Click en checkbox Escenario Temperatura 2080-2099        
+
+        // Add an event listener for the checkbox with id "81temp"
+        document.getElementById("80temp").addEventListener("click", function() {
+          // Update layerA visibility based on the checkbox state
+          layerN.visible = this.checked,   
+          legendN.visible = this.checked,
+          statsN.visible = this.checked;
+
+
+          if (this.checked) {
+            // Create a custom PopupTemplate for statsA
+            var popupTemplate = new PopupTemplate({
+              title: "{PAIS}",
+              content: [
+                {
+                  type: "fields",
+                  fieldInfos: [
+                    {
+                      fieldName: "Periodo",
+                      label: "Período"
+                    },
+                    {
+                      fieldName: "Mínimo",
+                      label: "Mínimo C°"
+                    },
+                    {
+                      fieldName: "Máximo",
+                      label: "Máximo C°"
+                    },
+                    {
+                      fieldName: "Rango",
+                      label: "Rango C°"
+                    },
+                    {
+                      fieldName: "Promedio",
+                      label: "Promedio C°"
+                    }
+                  ]
+                }
+              ]
+            });
+            
+            // Set the PopupTemplate for statsA
+            statsN.popupTemplate = popupTemplate;
+          } else {
+            // Remove the PopupTemplate for statsA
+            statsN.popupTemplate = null;
+          }
+        
+        });
+
+
+
+
+
+      });
+
+      
+
+
+    </script>
+  </head>
+
+  <body>
+    <div id="map"></div>
+    <div id="leftPanel">
+      <h1>Climatologías históricas</h1>
+      <h2>Precipitación</h2>
+      <ul>
+        <li><input type="checkbox" id="81precip"><label for="layerA">1981-1994</label></li>
+        <li><input type="checkbox" id="94precip"><label for="layerB">1995-2014</label></li>
+      </ul>
+      <h2>Temperatura media</h2>
+      <ul>
+        <li><input type="checkbox" id="81temp"><label for="layerC">1981-1994</label></li>
+        <li><input type="checkbox" id="94temp"><label for="layerD">1995-2014</label></li>
+      </ul>
+    </div>
+    <div id="rightPanel">
+      <h1>Escenarios de cambio climático</h1>
+      <h2>Precipitación</h2>
+      <ul>
+        <li><input type="checkbox" id="20precip"><label for="layerF">2020-2039</label></li>
+        <li><input type="checkbox" id="40precip"><label for="layerG">2040-2059</label></li>
+        <li><input type="checkbox" id="60precip"><label for="layerH">2060-2079</label></li>
+        <li><input type="checkbox" id="80precip"><label for="layerJ">2080-2099</label></li>
+      </ul>
+      <h4>Temperatura media</h4>
+      <ul>
+        <li><input type="checkbox" id="20temp"><label for="layerK">2020-2039</label></li>
+        <li><input type="checkbox" id="40temp"><label for="layerL">2040-2059</label></li>
+        <li><input type="checkbox" id="60temp"><label for="layerM">2060-2079</label></li>
+        <li><input type="checkbox" id="80temp"><label for="layerN">2080-2099</label></li>
+      </ul>
+    </div>
+  </body>
+</html>

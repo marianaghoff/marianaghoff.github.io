@@ -1,0 +1,59 @@
+* {
+    font-family: 'Roboto', sans-serif;
+}
+
+.cards {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+    margin: 30px;
+    gap: 1em;
+} 
+
+form {
+    margin: 30px;
+    padding: 10px;
+}
+
+#logo-white, #logo-black {
+    width: 80px;
+    height: 25px;
+}
+
+#copyright {
+    width: 18px;
+    height: 18px;
+}
+
+.precios {
+    display: flex;
+    justify-content: flex-end;
+    align-items: first baseline;
+}
+
+.card-title {
+    font-size: 20px;
+    align-items: left;
+    color: black;
+    font-weight: 300;
+}
+
+.card-text {
+    font-size: 16px;
+    align-items: left;
+    color: #707070;
+    font-weight: 300;
+}
+
+#email-input::placeholder {
+    color: #4a4a4b7a; 
+    opacity: 0.7;
+    font-weight: 300;
+}
+
+#name-input::placeholder {
+    color: #4a4a4b7a; 
+    opacity: 0.7;
+    font-weight: 300;
+}
